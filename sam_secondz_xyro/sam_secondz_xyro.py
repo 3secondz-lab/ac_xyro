@@ -36,6 +36,16 @@ dbgLabel = 0
 #Ini overwritable constants
 UDP_IP = "127.0.0.1"
 UDP_PORT = 59481
+DEVICE_ID = 0xac00000000000001
+
+# dev server
+#UDP_IP = "15.165.61.176"
+#UDP_PORT = 11327
+
+# live server
+#UDP_IP = "15.165.61.176"
+#UDP_PORT = 11325
+
 # End of ini
 MESSAGE = "Hello, World!"
 
@@ -44,6 +54,7 @@ MESSAGE = "Hello, World!"
 
 xyro_dev = None
 DebugInput = None
+DebugInput2 = None
 
 BtnStart = None
 BtnStop = None
@@ -51,7 +62,7 @@ BtnStop = None
 def acMain(ac_version):
     global appWindow, dbgLabel
     global xyro_dev
-    global DebugInput
+    global DebugInput, DebugInput2
     global BtnStart, BtnStop
 
     try:
@@ -59,7 +70,7 @@ def acMain(ac_version):
         sam_secondz_xyro_config.handleIni('3secondz_xyro')
         
         ac.log("3secondz_xyro:: xyro created")
-        xyro_dev = xyrodevice.XyroDevice(UDP_IP, UDP_PORT)
+        xyro_dev = xyrodevice.XyroDevice(UDP_IP, UDP_PORT, DEVICE_ID)
 
         appWindow=ac.newApp("3secondz_xyro")
         ac.setSize(appWindow,300,100)
@@ -82,13 +93,18 @@ def acMain(ac_version):
         ac.setSize(DebugInput,280,20)
         ac.setText(DebugInput, "")
         
+        DebugInput2 = ac.addTextInput(appWindow,"TEXT_INPUT")
+        ac.setPosition(DebugInput2,10,90)
+        ac.setSize(DebugInput2,280,20)
+        ac.setText(DebugInput2, "")
+        
         BtnStart = ac.addButton(appWindow, "Start")
-        ac.setPosition(BtnStart, 10, 90)
+        ac.setPosition(BtnStart, 10, 120)
         ac.setSize(BtnStart,90,20)
         ac.addOnClickedListener(BtnStart, onClickBtnStart)
         
         BtnStop = ac.addButton(appWindow, "Stop")
-        ac.setPosition(BtnStop, 110, 90)
+        ac.setPosition(BtnStop, 110, 120)
         ac.setSize(BtnStop,90,20)
         ac.addOnClickedListener(BtnStop, onClickBtnStop)
         
@@ -101,7 +117,7 @@ def acMain(ac_version):
         dbgLabel = ac.addLabel(appWindow, "")
         ac.setPosition(dbgLabel, 15, 405)
         
-        xyro_dev.start()
+        #xyro_dev.turnOn()
         
         ac.log("3secondz_xyro::acMain finished")
     except Exception as e:
@@ -125,7 +141,7 @@ def onAppActivated(*args):
 
 def acShutdown():
     global xyro_dev
-    xyro_dev.stop()
+    xyro_dev.turnOff()
     running = False
     hSession = None
     centerOffset = None
@@ -137,7 +153,7 @@ def acShutdown():
 def onFormRender(deltaT):
     global showWindowTitle, appWindowActivated, appWindow, dbgLabel
     global xyro_dev
-    global DebugInput
+    global DebugInput, DebugInput2
     if running == False:
         return
 
@@ -161,13 +177,31 @@ def onFormRender(deltaT):
         # MESSAGE = "speed: " + str(int(info.physics.speedKmh))
         #MESSAGE = "speed: " + str(int(ac.getCarState(0, acsys.CS.SpeedKMH)))
         # sock.sendto(MESSAGE.encode(), (UDP_IP, UDP_PORT))
+        
         if xyro_dev == None:
             ac.log("3secondz_xyro::xyro none")
         else:
             if xyro_dev.isOn():
+                car_pos = list(ac.getCarState(0, acsys.CS.WorldPosition))
+                car_pos_tmp = [0, 0, 0]
+                car_pos_tmp[0] = round(car_pos[0], 1)
+                car_pos_tmp[1] = round(-car_pos[2], 1)
+                car_pos_tmp[2] = round(car_pos[1], 1)
+                ac.setText(DebugInput2, "AC: " + str(car_pos_tmp))
+                
+                tmp_result = xyro_dev.getCarPosition()
+                ac.setText(DebugInput, "GPS: " + str(tmp_result))
+                
+                
                 #xyro_dev.sendInfo()
                 command = xyro_dev.recvInfo()
-                ac.setText(DebugInput, command.decode())
+                #ac.setText(DebugInput, command.decode())
+                
+                ac.console(str(command))
+                
+                
+                
+                
                 # ac.log("3secondz_xyro::onFormRender() Something sent")
             # else:
                 # ac.log("3secondz_xyro::onFormRender() xyro off")
@@ -178,9 +212,9 @@ def onFormRender(deltaT):
     
 
 def onClickBtnStart(*args):
-    ac.console("Started")
-    xyro_dev.sendAlivePacketStart()
+    xyro_dev.start()
     
 def onClickBtnStop(*args):
     ac.console("Stopped")
-    xyro_dev.sendAlivePacketStop()
+    xyro_dev.stop()
+
