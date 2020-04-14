@@ -1,12 +1,12 @@
 
-ac_xyro -- Asseto Corsa in-game app to emulate Xyro
+* ac_xyro -- Asseto Corsa in-game app to emulate Xyro
 
 
 HISTORY:
-2020.04.14 - Alive packet 전송
+* 2020.04.14 - Alive packet 전송
              위치, 속도 NAV_PVT 패킷으로 전송
 
-2020.04.07 - 게임 내 차량 데이터 읽어 UDP 전송
+* 2020.04.07 - 게임 내 차량 데이터 읽어 UDP 전송
 
 설치 방법:
 1) sam_second_xyro 폴더를 폴더째 C:\Program Files (x86)\Steam\steamapps\common\assettocorsa\apps\python 로 복사
@@ -25,13 +25,13 @@ TODO:
 
 PROTOCOL:
 - 구현 완료
-Alive
+1. Alive
 
 - 구현 중
-NAV_PVT
+1. NAV_PVT
 
 - 구현 예정
-Start
-Stop
-CAN Data
-OBD Data
+1. Start
+2. Stop
+3. CAN Data
+4. OBD Data
