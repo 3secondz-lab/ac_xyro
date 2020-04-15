@@ -60,7 +60,9 @@ class XyroDevice(object):
     
     sendDataPacketRunning = False
     timerSendData = None
-    timerSendDataInterval = 0.1
+    timerSendDataInterval = 0.05
+    timerSendDataActualInterval = 0
+    timerSendDataTimePrev = time.time()
     
     [x0, y0] = [0, 0]
     [x0p, y0p] = [0, 0]
@@ -174,6 +176,9 @@ class XyroDevice(object):
         # actual task
         try:
             if self.deviceStatus == DEV_STATUS_STARTED:
+                current_time = time.time()
+                self.timerSendDataActualInterval = current_time - self.timerSendDataTimePrev
+                self.timerSendDataTimePrev = current_time
                 # NAV_PVT packet
                 #self.sock.sendto(self.generatePacket(PACKET_NAV_PVT), (self.destIP, self.destPort))
                 self.sock.send(self.generatePacket(PACKET_NAV_PVT))
@@ -237,11 +242,6 @@ class XyroDevice(object):
             ubx_checksum = 0
             
             ubx_iTOW = int((time.time()+259200)*1000)%604800000 # GPS time of week in ms
-            # ubx_month = time.gmtime()[0]
-            # ubx_day = 0
-            # ubx_hour = 0
-            # ubx_min = 0
-            # ubx_sec = 0
             [ubx_year, ubx_month, ubx_day, ubx_hour, ubx_min, ubx_sec] = time.gmtime()[0:6]
             ubx_valid = 0xff
             ubx_tAcc = 10
@@ -257,8 +257,8 @@ class XyroDevice(object):
             ubx_velN = 10
             ubx_velE = 10
             ubx_velD = 10
-            ubx_gSpeed = int(info.physics.speedKmh*10000/36)  # TODO
-            ubx_headMot = 0 # TODO
+            ubx_gSpeed = int(info.physics.speedKmh*10000/36)
+            ubx_headMot = int(((info.physics.heading + math.pi) * 180 / math.pi) * (10**5))
             ubx_sAcc = 10
             ubx_headAcc = 10 # TODO
             ubx_pDOP = 10

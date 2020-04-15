@@ -16,6 +16,7 @@ import ac
 import acsys
 
 import xyrodevice
+from sim_info import info
 
 
 appWindow=0
@@ -182,17 +183,29 @@ def onFormRender(deltaT):
             ac.log("3secondz_xyro::xyro none")
         else:
             if xyro_dev.isOn():
-                car_pos = list(ac.getCarState(0, acsys.CS.WorldPosition))
-                car_pos_tmp = [0, 0, 0]
-                car_pos_tmp[0] = round(car_pos[0], 1)
-                car_pos_tmp[1] = round(-car_pos[2], 1)
-                car_pos_tmp[2] = round(car_pos[1], 1)
-                ac.setText(DebugInput2, "AC: " + str(car_pos_tmp))
+            
+                ### FOR DEBUG ONLY
+                ## AC-GPS conversion
+                # car_pos = list(ac.getCarState(0, acsys.CS.WorldPosition))
+                # car_pos_tmp = [0, 0, 0]
+                # car_pos_tmp[0] = round(car_pos[0], 1)
+                # car_pos_tmp[1] = round(-car_pos[2], 1)
+                # car_pos_tmp[2] = round(car_pos[1], 1)
+                # ac.setText(DebugInput2, "AC: " + str(car_pos_tmp))
                 
-                tmp_result = xyro_dev.getCarPosition()
-                ac.setText(DebugInput, "GPS: " + str(tmp_result))
+                tmp_result = int(xyro_dev.timerSendDataActualInterval * 1000)
+                ac.setText(DebugInput, "Packet Interval: " + str(tmp_result).rjust(4, ' ') + "ms")
                 
                 
+                ### FOR DEBUG ONLY
+                ## heading
+                tmp_var = int(((info.physics.heading + math.pi) * 180 / math.pi) * (10**5))
+                ac.setText(DebugInput2, "AC: " + str(tmp_var))
+                
+                
+                
+                
+                ## PROCESS COMMAND RECEIVED FROM SERVER
                 #xyro_dev.sendInfo()
                 command = xyro_dev.recvInfo()
                 #ac.setText(DebugInput, command.decode())

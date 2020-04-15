@@ -47,6 +47,7 @@ def handleIni(appName):
     # values, but they also can be overridden by the defaults
     sam_secondz_xyro.UDP_IP = getOrSetDefaultString(config, 'UDP_IP', "127.0.0.1")
     sam_secondz_xyro.UDP_PORT = getOrSetDefaultInt(config, 'UDP_PORT', 59481)
+    sam_secondz_xyro.DEVICE_ID = int(getOrSetDefaultString(config, 'DEVICE_ID', "ac00000000000001"), 16)
     
 
     # If anything was written to the config, we'll have to write this to the config file
