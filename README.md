@@ -16,6 +16,7 @@
 (default 기기 번호 ac00000000000001는 jongpil.jung@3secondz.com 계정에 이미 등록됨)
 
 **현재는 Assetto Corsa 용인 서킷에서만 동작함**
+
 서킷 다운로드: https://drive.google.com/file/d/1tS8-dOdjPKPYiDWrBq-6USR_7jqlrblb/view?usp=sharing
 
 
