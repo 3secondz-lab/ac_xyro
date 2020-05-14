@@ -48,7 +48,11 @@ def handleIni(appName):
     sam_secondz_xyro.UDP_IP = getOrSetDefaultString(config, 'UDP_IP', "127.0.0.1")
     sam_secondz_xyro.UDP_PORT = getOrSetDefaultInt(config, 'UDP_PORT', 59481)
     sam_secondz_xyro.DEVICE_ID = int(getOrSetDefaultString(config, 'DEVICE_ID', "ac00000000000001"), 16)
-    
+    sam_secondz_xyro.FW_VERSION = getOrSetDefaultString(config, 'FW_VERSION', "100B").encode().ljust(10,b'\0')
+    sam_secondz_xyro.STEERING_ANGLE_RANGE = getOrSetDefaultInt(config, 'STEERING_ANGLE_RANGE', 1080)
+    sam_secondz_xyro.ALIVE_PACKET_PERIOD = getOrSetDefaultFloat(config, 'ALIVE_PACKET_PERIOD', 1.0)
+    sam_secondz_xyro.CAN_PACKET_PERIOD = getOrSetDefaultFloat(config, 'CAN_PACKET_PERIOD', 0.05)
+    sam_secondz_xyro.NAV_PACKET_PERIOD = getOrSetDefaultFloat(config, 'NAV_PACKET_PERIOD', 0.1)
 
     # If anything was written to the config, we'll have to write this to the config file
     # in the end

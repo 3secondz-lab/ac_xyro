@@ -38,6 +38,12 @@ dbgLabel = 0
 UDP_IP = "127.0.0.1"
 UDP_PORT = 59481
 DEVICE_ID = 0xac00000000000001
+FW_VERSION = "100B".encode().ljust(10,b'\0')
+STEERING_ANGLE_RANGE = 1080
+ALIVE_PACKET_PERIOD = 1.0
+CAN_PACKET_PERIOD = 0.05
+MEAS_PACKET_PERIOD = 0.05
+NAV_PACKET_PERIOD = 0.1
 
 # dev server
 #UDP_IP = "15.165.61.176"
@@ -56,6 +62,7 @@ MESSAGE = "Hello, World!"
 xyro_dev = None
 DebugInput = None
 DebugInput2 = None
+DebugInput3 = None
 
 BtnStart = None
 BtnStop = None
@@ -63,7 +70,7 @@ BtnStop = None
 def acMain(ac_version):
     global appWindow, dbgLabel
     global xyro_dev
-    global DebugInput, DebugInput2
+    global DebugInput, DebugInput2, DebugInput3
     global BtnStart, BtnStop
 
     try:
@@ -71,7 +78,7 @@ def acMain(ac_version):
         sam_secondz_xyro_config.handleIni('3secondz_xyro')
         
         ac.log("3secondz_xyro:: xyro created")
-        xyro_dev = xyrodevice.XyroDevice(UDP_IP, UDP_PORT, DEVICE_ID)
+        xyro_dev = xyrodevice.XyroDevice(UDP_IP, UDP_PORT, DEVICE_ID, FW_VERSION, STEERING_ANGLE_RANGE, ALIVE_PACKET_PERIOD, CAN_PACKET_PERIOD, NAV_PACKET_PERIOD, MEAS_PACKET_PERIOD)
 
         appWindow=ac.newApp("3secondz_xyro")
         ac.setSize(appWindow,300,100)
@@ -99,13 +106,18 @@ def acMain(ac_version):
         ac.setSize(DebugInput2,280,20)
         ac.setText(DebugInput2, "")
         
+        DebugInput3 = ac.addTextInput(appWindow,"TEXT_INPUT")
+        ac.setPosition(DebugInput3,10,120)
+        ac.setSize(DebugInput3, 280,20)
+        ac.setText(DebugInput3, "")
+        
         BtnStart = ac.addButton(appWindow, "Start")
-        ac.setPosition(BtnStart, 10, 120)
+        ac.setPosition(BtnStart, 10, 150)
         ac.setSize(BtnStart,90,20)
         ac.addOnClickedListener(BtnStart, onClickBtnStart)
         
         BtnStop = ac.addButton(appWindow, "Stop")
-        ac.setPosition(BtnStop, 110, 120)
+        ac.setPosition(BtnStop, 110, 150)
         ac.setSize(BtnStop,90,20)
         ac.addOnClickedListener(BtnStop, onClickBtnStop)
         
@@ -154,7 +166,7 @@ def acShutdown():
 def onFormRender(deltaT):
     global showWindowTitle, appWindowActivated, appWindow, dbgLabel
     global xyro_dev
-    global DebugInput, DebugInput2
+    global DebugInput, DebugInput2, DebugInput3
     if running == False:
         return
 
@@ -191,18 +203,45 @@ def onFormRender(deltaT):
                 # car_pos_tmp[0] = round(car_pos[0], 1)
                 # car_pos_tmp[1] = round(-car_pos[2], 1)
                 # car_pos_tmp[2] = round(car_pos[1], 1)
-                # ac.setText(DebugInput2, "AC: " + str(car_pos_tmp))
+                # ac.setText(DebugInput, "AC: " + str(car_pos_tmp))
                 
-                tmp_result = int(xyro_dev.timerSendDataActualInterval * 1000)
-                ac.setText(DebugInput, "Packet Interval: " + str(tmp_result).rjust(4, ' ') + "ms")
+                # tmp_result = xyro_dev.getCarPosition()
+                # ac.setText(DebugInput2, "GPS: " + str(tmp_result))
                 
                 
                 ### FOR DEBUG ONLY
+                ## UDP packet send interval
+                # tmp_result = int(xyro_dev.timerSendCanActualInterval * 1000)
+                # ac.setText(DebugInput, "Packet Interval: " + str(tmp_result).rjust(4, ' ') + "ms")
+                # ac.setText(DebugInput2, "Dev ID: " + hex(DEVICE_ID))
+                
+                ### FOR DEBUG ONLY
+                ## AccG
+                # tmp_result = int((info.physics.accG[0] * 9.81 * (2**10)))
+                # ac.setText(DebugInput, "AccG_X: " + str(tmp_result).rjust(8, ' ') + "")
+                # tmp_result = int((info.physics.accG[2] * 9.81 * (2**10)))
+                # ac.setText(DebugInput2, "AccG_Y: " + str(tmp_result).rjust(8, ' ') + "")
+                # tmp_result = int((info.physics.accG[1] * 9.81 * (2**10)))
+                # ac.setText(DebugInput2, "AccG_Z: " + str(tmp_result).rjust(8, ' ') + "")
+                
+                ### FOR DEBUG ONLY
+                ## LocalAngularVelocity
+                tmp_result = int(info.physics.localAngularVel[0] * 180 / math.pi * (2**12))
+                ac.setText(DebugInput, "AngVel_X: " + str(tmp_result).rjust(12, ' ') + "")
+                tmp_result = int(info.physics.localAngularVel[2] * 180 / math.pi * (2**12))
+                ac.setText(DebugInput2, "AngVel_Y: " + str(tmp_result).rjust(12, ' ') + "")
+                tmp_result = int(info.physics.localAngularVel[1] * 180 / math.pi * (2**12))
+                ac.setText(DebugInput3, "AngVel_Z: " + str(tmp_result).rjust(12, ' ') + "")
+                
+                ### FOR DEBUG ONLY
                 ## heading
-                tmp_var = int(((info.physics.heading + math.pi) * 180 / math.pi) * (10**5))
-                ac.setText(DebugInput2, "AC: " + str(tmp_var))
+                # tmp_var = int(((info.physics.heading + math.pi) * 180 / math.pi) * (10**5))
+                # ac.setText(DebugInput2, "AC: " + str(tmp_var))
                 
-                
+                ### FOR DEBUG ONLY
+                ## heading
+                # ac.setText(DebugInput, "turboBoost: " + str(info.physics.turboBoost))
+                # ac.setText(DebugInput2, "Dev Tick: " + str(xyro_dev.printDebugMsg()[1]))
                 
                 
                 ## PROCESS COMMAND RECEIVED FROM SERVER
