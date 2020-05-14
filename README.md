@@ -3,6 +3,8 @@
 
 
 **HISTORY:**
+* 2020.05.14 - CAN, MEAS 추가 완료
+
 * 2020.04.14 - Alive packet 전송
              위치, 속도 NAV_PVT 패킷으로 전송
 
@@ -27,10 +29,11 @@
 **PROTOCOL:**
 1. 구현 완료
    - Alive
-2. 구현 중
    - NAV_PVT
+   - CAN Data
+   - ESF_MEAS
+   
 3. 구현 예정
    - Start
    - Stop
-   - CAN Data
    - OBD Data
