@@ -217,18 +217,18 @@ def onFormRender(deltaT):
                 
                 ### FOR DEBUG ONLY
                 ## AccG
-                # tmp_result = int((info.physics.accG[0] * 9.81 * (2**10)))
-                # ac.setText(DebugInput, "AccG_X: " + str(tmp_result).rjust(8, ' ') + "")
                 # tmp_result = int((info.physics.accG[2] * 9.81 * (2**10)))
+                # ac.setText(DebugInput, "AccG_X: " + str(tmp_result).rjust(8, ' ') + "")
+                # tmp_result = int((info.physics.accG[0] * 9.81 * (2**10)))
                 # ac.setText(DebugInput2, "AccG_Y: " + str(tmp_result).rjust(8, ' ') + "")
                 # tmp_result = int((info.physics.accG[1] * 9.81 * (2**10)))
-                # ac.setText(DebugInput2, "AccG_Z: " + str(tmp_result).rjust(8, ' ') + "")
+                # ac.setText(DebugInput3, "AccG_Z: " + str(tmp_result).rjust(8, ' ') + "")
                 
                 ### FOR DEBUG ONLY
                 ## LocalAngularVelocity
-                tmp_result = int(info.physics.localAngularVel[0] * 180 / math.pi * (2**12))
-                ac.setText(DebugInput, "AngVel_X: " + str(tmp_result).rjust(12, ' ') + "")
                 tmp_result = int(info.physics.localAngularVel[2] * 180 / math.pi * (2**12))
+                ac.setText(DebugInput, "AngVel_X: " + str(tmp_result).rjust(12, ' ') + "")
+                tmp_result = int(info.physics.localAngularVel[0] * 180 / math.pi * (2**12))
                 ac.setText(DebugInput2, "AngVel_Y: " + str(tmp_result).rjust(12, ' ') + "")
                 tmp_result = int(info.physics.localAngularVel[1] * 180 / math.pi * (2**12))
                 ac.setText(DebugInput3, "AngVel_Z: " + str(tmp_result).rjust(12, ' ') + "")
